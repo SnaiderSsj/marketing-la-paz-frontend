@@ -11,7 +11,7 @@ export default function Campañas() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Card className="p-8 text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Cargando datos de campañas...</p>
+            <p className="mt-4 text-gray-600">Cargando datos de campañas... XD</p>
           </Card>
         </div>
       </div>
