@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { campañasAPI, leadsAPI, marketingAPI } from '../services/api';
+import { campañasAPI, leadsAPI, dashboardAPI, healthAPI } from '../services/api';
 
 // Campañas hooks
 export const useCampañas = () => 
@@ -7,6 +7,15 @@ export const useCampañas = () =>
     queryKey: ['campañas'],
     queryFn: async () => {
       const response = await campañasAPI.getAll();
+      return response.data;
+    },
+  });
+
+export const useCampañasParaTabla = () =>
+  useQuery({
+    queryKey: ['campañas', 'tabla'],
+    queryFn: async () => {
+      const response = await campañasAPI.getParaTabla();
       return response.data;
     },
   });
@@ -62,11 +71,49 @@ export const useLeads = () =>
     },
   });
 
+export const useLeadsParaTabla = () =>
+  useQuery({
+    queryKey: ['leads', 'tabla'],
+    queryFn: async () => {
+      const response = await leadsAPI.getParaTabla();
+      return response.data;
+    },
+  });
+
 export const useLeadsStats = () =>
   useQuery({
     queryKey: ['leads', 'estadisticas'],
     queryFn: async () => {
       const response = await leadsAPI.getEstadisticas();
+      return response.data;
+    },
+  });
+
+export const useLeadsPorCampaña = (campañaId) =>
+  useQuery({
+    queryKey: ['leads', 'campaña', campañaId],
+    queryFn: async () => {
+      const response = await leadsAPI.getPorCampaña(campañaId);
+      return response.data;
+    },
+    enabled: !!campañaId,
+  });
+
+// Dashboard hooks
+export const useDashboard = () =>
+  useQuery({
+    queryKey: ['dashboard'],
+    queryFn: async () => {
+      const response = await dashboardAPI.getResumen();
+      return response.data;
+    },
+  });
+
+export const useMetricas = () =>
+  useQuery({
+    queryKey: ['metricas'],
+    queryFn: async () => {
+      const response = await dashboardAPI.getMetricas();
       return response.data;
     },
   });
@@ -77,13 +124,24 @@ export const useHealth = () =>
     queryKey: ['health'],
     queryFn: async () => {
       try {
-        const response = await campañasAPI.getAll();
+        const response = await healthAPI.check();
         return {
           status: 'healthy',
+          data: response.data,
           timestamp: new Date().toISOString()
         };
       } catch (error) {
-        throw new Error('Backend not responding');
+        // Fallback: intentar con campañas
+        try {
+          await campañasAPI.getAll();
+          return {
+            status: 'healthy',
+            data: { message: 'Backend responding via campañas endpoint' },
+            timestamp: new Date().toISOString()
+          };
+        } catch (fallbackError) {
+          throw new Error('Backend not responding');
+        }
       }
     },
   });

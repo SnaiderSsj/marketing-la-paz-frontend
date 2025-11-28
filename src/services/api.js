@@ -30,16 +30,31 @@ api.interceptors.response.use(
   }
 );
 
+// Servicios de Campañas
 export const campañasAPI = {
-  getAll: () => api.get('/api/campañas'),
+  getAll: () => api.get('https://marketinglapaz-production.up.railway.app/api/Campañas'),
   getById: (id) => api.get(`/api/campañas/${id}`),
   create: (data) => api.post('/api/campañas', data),
   update: (id, data) => api.put(`/api/campañas/${id}`, data),
   delete: (id) => api.delete(`/api/campañas/${id}`),
   getActivas: () => api.get('/api/campañas/activas'),
   getEstadisticas: () => api.get('/api/campañas/estadisticas'),
+  getParaTabla: () => api.get('/api/campañas').then(response => ({
+    data: response.data,
+    columns: [
+      { key: 'id', title: 'ID' },
+      { key: 'nombre', title: 'Nombre' },
+      { key: 'tipoCampaña', title: 'Tipo' },
+      { key: 'zonaCobertura', title: 'Zona' },
+      { key: 'fechaInicio', title: 'Inicio' },
+      { key: 'fechaFin', title: 'Fin' },
+      { key: 'presupuesto', title: 'Presupuesto' },
+      { key: 'estado', title: 'Estado' }
+    ]
+  }))
 };
 
+// Servicios de Leads
 export const leadsAPI = {
   getAll: () => api.get('/api/leads'),
   getById: (id) => api.get(`/api/leads/${id}`),
@@ -47,11 +62,30 @@ export const leadsAPI = {
   update: (id, data) => api.put(`/api/leads/${id}`, data),
   delete: (id) => api.delete(`/api/leads/${id}`),
   getEstadisticas: () => api.get('/api/leads/estadisticas'),
+  getPorCampaña: (campañaId) => api.get(`/api/leads/por-campaña/${campañaId}`),
+  getParaTabla: () => api.get('/api/leads').then(response => ({
+    data: response.data,
+    columns: [
+      { key: 'id', title: 'ID' },
+      { key: 'nombre', title: 'Nombre' },
+      { key: 'email', title: 'Email' },
+      { key: 'telefono', title: 'Teléfono' },
+      { key: 'campañaId', title: 'Campaña ID' },
+      { key: 'estado', title: 'Estado' },
+      { key: 'fechaCreacion', title: 'Fecha Creación' }
+    ]
+  }))
 };
 
-export const marketingAPI = {
-  getDashboard: () => api.get('/api/dashboard'),
-  getHealth: () => api.get('/health'),
+// Servicios de Dashboard
+export const dashboardAPI = {
+  getResumen: () => api.get('/api/dashboard'),
+  getMetricas: () => api.get('/api/dashboard/metricas'),
+};
+
+// Health check
+export const healthAPI = {
+  check: () => api.get('/health')
 };
 
 export default api;
