@@ -32,7 +32,7 @@ api.interceptors.response.use(
 
 // Servicios de Campañas
 export const campañasAPI = {
-  getAll: () => api.get('https://marketinglapaz-production.up.railway.app/api/Campañas'),
+  getAll: () => api.get('https://marketinglapaz-production.up.railway.app/api/Campa%C3%B1as'),
   getById: (id) => api.get(`/api/campañas/${id}`),
   create: (data) => api.post('/api/campañas', data),
   update: (id, data) => api.put(`/api/campañas/${id}`, data),
