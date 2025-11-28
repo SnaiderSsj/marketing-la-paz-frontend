@@ -1,35 +1,30 @@
-import React from 'react';
 import { useHealth } from '../../hooks/useApi';
 
-export const HealthStatus = () => {
-  const { data: health, isLoading, error } = useHealth();
+export default function HealthStatus() {
+  const { data, isLoading, error } = useHealth();
 
   if (isLoading) {
     return (
-      <div className="flex items-center space-x-2">
-        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-400"></div>
-        <span className="text-sm text-gray-600">Verificando...</span>
+      <div className="flex items-center gap-2 text-blue-600">
+        <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
+        <span className="text-sm">Conectando...</span>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center space-x-2">
-        <span className="text-red-500">❌</span>
-        <span className="text-sm text-red-600">Error de conexión</span>
+      <div className="flex items-center gap-2 text-red-600">
+        <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+        <span className="text-sm">Error de conexión</span>
       </div>
     );
   }
 
   return (
-    <div className="flex items-center space-x-2">
-      <span className={health?.status === 'Healthy' ? 'text-green-500' : 'text-red-500'}>
-        {health?.status === 'Healthy' ? '✅' : '❌'}
-      </span>
-      <span className="text-sm text-gray-600">
-        {health?.status === 'Healthy' ? 'Conectado' : 'Desconectado'}
-      </span>
+    <div className="flex items-center gap-2 text-green-600">
+      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+      <span className="text-sm">Backend conectado</span>
     </div>
   );
-};
+}

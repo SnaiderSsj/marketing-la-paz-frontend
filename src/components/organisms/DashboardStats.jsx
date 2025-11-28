@@ -1,58 +1,67 @@
-import React from 'react';
-import { useDashboard, useCampañaStats, useLeadsStats } from '../../hooks/useApi'
-import { StatCard } from '../molecules/StatCard';
+import { useCampañaStats } from '../../hooks/useApi';
+import StatCard from '../molecules/StatCard';
 
-export const DashboardStats = () => {
-  const { data: dashboardData, isLoading: dashboardLoading } = useDashboard();
-  const { data: campañasStats, isLoading: campañasLoading } = useCampañaStats();
-  const { data: leadsStats, isLoading: leadsLoading } = useLeadsStats();
-
-  const isLoading = dashboardLoading || campañasLoading || leadsLoading;
+export default function DashboardStats() {
+  const { data: stats, isLoading, error } = useCampañaStats();
 
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {[...Array(4)].map((_, i) => (
-          <div key={i} className="animate-pulse">
-            <div className="h-24 bg-gray-200 rounded-lg"></div>
+        {[1, 2, 3, 4].map(i => (
+          <div key={i} className="p-6 bg-gray-100 rounded-lg animate-pulse">
+            <div className="h-4 bg-gray-300 rounded w-1/2 mb-2"></div>
+            <div className="h-8 bg-gray-300 rounded w-3/4"></div>
           </div>
         ))}
       </div>
     );
   }
 
-  const stats = [
-    {
-      title: 'Campañas Activas',
-      value: dashboardData?.data?.metricas?.campañasActivas || 0,
-      subtitle: 'En ejecución',
-      icon: '🎯',
-    },
-    {
-      title: 'Total Leads',
-      value: dashboardData?.data?.metricas?.totalLeads || 0,
-      subtitle: 'Leads generados',
-      icon: '👥',
-    },
-    {
-      title: 'Presupuesto Total',
-      value: `Bs. ${(dashboardData?.data?.metricas?.presupuestoTotal || 0).toLocaleString()}`,
-      subtitle: 'Campañas activas',
-      icon: '💰',
-    },
-    {
-      title: 'Leads Este Mes',
-      value: dashboardData?.data?.metricas?.leadsEsteMes || 0,
-      subtitle: 'Mes actual',
-      icon: '📈',
-    },
-  ];
+  if (error) {
+    return (
+      <div className="p-6 bg-red-50 border border-red-200 rounded-lg text-red-700">
+        <p>Error cargando estadísticas: {error.message}</p>
+      </div>
+    );
+  }
+
+  const estadisticas = stats || {
+    totalCampañas: 0,
+    campañasActivas: 0,
+    presupuestoTotal: 0,
+    roiPromedio: 0
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {stats.map((stat, index) => (
-        <StatCard key={index} {...stat} />
-      ))}
+      <StatCard
+        title="Total Campañas"
+        value={estadisticas.totalCampañas}
+        subtitle="Todas las campañas"
+        icon="📊"
+        color="blue"
+      />
+      <StatCard
+        title="Campañas Activas"
+        value={estadisticas.campañasActivas}
+        subtitle="En ejecución"
+        icon="🚀"
+        color="green"
+      />
+      <StatCard
+        title="Presupuesto Total"
+        value={`$${estadisticas.presupuestoTotal?.toLocaleString() || '0'}`}
+        subtitle="Inversión total"
+        icon="💰"
+        color="purple"
+      />
+      <StatCard
+        title="ROI Promedio"
+        value={`${(estadisticas.roiPromedio || 0).toFixed(1)}%`}
+        subtitle="Retorno promedio"
+        icon="📈"
+        color="orange"
+      />
     </div>
   );
-};
+}

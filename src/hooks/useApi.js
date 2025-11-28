@@ -1,46 +1,89 @@
-import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { campañasAPI, leadsAPI, marketingAPI } from '../services/api';
 
 // Campañas hooks
 export const useCampañas = () => 
-  useQuery('campañas', campañasAPI.getAll, {
-    staleTime: 5 * 60 * 1000, // 5 minutos
+  useQuery({
+    queryKey: ['campañas'],
+    queryFn: async () => {
+      const response = await campañasAPI.getAll();
+      return response.data;
+    },
   });
 
 export const useCampañasActivas = () =>
-  useQuery('campañas-activas', campañasAPI.getActivas);
+  useQuery({
+    queryKey: ['campañas', 'activas'],
+    queryFn: async () => {
+      const response = await campañasAPI.getActivas();
+      return response.data;
+    },
+  });
 
 export const useCampañaStats = () =>
-  useQuery('campañas-stats', campañasAPI.getEstadisticas);
+  useQuery({
+    queryKey: ['campañas', 'estadisticas'],
+    queryFn: async () => {
+      const response = await campañasAPI.getEstadisticas();
+      return response.data;
+    },
+  });
+
+export const useCampaña = (id) =>
+  useQuery({
+    queryKey: ['campañas', id],
+    queryFn: async () => {
+      const response = await campañasAPI.getById(id);
+      return response.data;
+    },
+    enabled: !!id,
+  });
 
 export const useCreateCampaña = () => {
   const queryClient = useQueryClient();
-  return useMutation(campañasAPI.create, {
+  return useMutation({
+    mutationFn: async (campañaData) => {
+      const response = await campañasAPI.create(campañaData);
+      return response.data;
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries('campañas');
-      queryClient.invalidateQueries('campañas-activas');
+      queryClient.invalidateQueries({ queryKey: ['campañas'] });
     },
   });
 };
 
 // Leads hooks
 export const useLeads = () =>
-  useQuery('leads', leadsAPI.getAll);
+  useQuery({
+    queryKey: ['leads'],
+    queryFn: async () => {
+      const response = await leadsAPI.getAll();
+      return response.data;
+    },
+  });
 
 export const useLeadsStats = () =>
-  useQuery('leads-stats', leadsAPI.getEstadisticas);
+  useQuery({
+    queryKey: ['leads', 'estadisticas'],
+    queryFn: async () => {
+      const response = await leadsAPI.getEstadisticas();
+      return response.data;
+    },
+  });
 
-// Marketing hooks
-export const useDashboard = () =>
-  useQuery('dashboard', marketingAPI.getDashboard);
-
-export const useROICampañas = () =>
-  useQuery('roi-campañas', marketingAPI.getROICampañas);
-
-export const usePerformanceMensual = () =>
-  useQuery('performance-mensual', marketingAPI.getPerformanceMensual);
-
+// Health hook
 export const useHealth = () =>
-  useQuery('health', marketingAPI.getHealth, {
-    refetchInterval: 30000, // Verificar cada 30 segundos
+  useQuery({
+    queryKey: ['health'],
+    queryFn: async () => {
+      try {
+        const response = await campañasAPI.getAll();
+        return {
+          status: 'healthy',
+          timestamp: new Date().toISOString()
+        };
+      } catch (error) {
+        throw new Error('Backend not responding');
+      }
+    },
   });

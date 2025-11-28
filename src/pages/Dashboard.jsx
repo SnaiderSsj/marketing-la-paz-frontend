@@ -1,26 +1,43 @@
-import React from 'react';
-import { DashboardStats } from '../components/organisms/DashboardStats';
-import { CampañasList } from '../components/organisms/CampañasList';
-import { Card, CardBody, CardHeader } from '../components/atoms/Card';
+import HealthStatus from '../components/molecules/HealthStatus';
+import DashboardStats from '../components/organisms/DashboardStats';
+import CampañasList from '../components/organisms/CampañasList';
 
-export const Dashboard = () => {
+export default function Dashboard() {
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard Marketing La Paz</h1>
-        <p className="text-gray-600">Resumen ejecutivo de campañas y métricas</p>
-      </div>
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Marketing La Paz - Dashboard
+              </h1>
+              <p className="text-gray-600 mt-2">
+                Gestión y monitoreo de campañas de marketing
+              </p>
+            </div>
+            <HealthStatus />
+          </div>
+        </div>
 
-      <DashboardStats />
+        {/* Estadísticas */}
+        <section className="mb-12">
+          <h2 className="text-xl font-semibold text-gray-900 mb-6">
+            Resumen General
+          </h2>
+          <DashboardStats />
+        </section>
 
-      <Card>
-        <CardHeader>
-          <h2 className="text-xl font-semibold text-gray-900">Campañas Recientes</h2>
-        </CardHeader>
-        <CardBody>
+        {/* Lista de Campañas */}
+        <section>
+          <h2 className="text-xl font-semibold text-gray-900 mb-6">
+            Campañas Recientes
+          </h2>
           <CampañasList />
-        </CardBody>
-      </Card>
+        </section>
+      </div>
     </div>
   );
-};
+}

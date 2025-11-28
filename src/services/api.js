@@ -10,7 +10,7 @@ const api = axios.create({
 // Interceptor para logs
 api.interceptors.request.use(
   (config) => {
-    console.log(`🔄 Making ${config.method?.toUpperCase()} request to: ${config.url}`);
+    console.log(`🔄 ${config.method?.toUpperCase()} to: ${config.url}`);
     return config;
   },
   (error) => {
@@ -21,7 +21,7 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   (response) => {
-    console.log(`✅ Response received from: ${response.config.url}`);
+    console.log(`✅ Response from: ${response.config.url}`, response.data);
     return response;
   },
   (error) => {
@@ -46,17 +46,11 @@ export const leadsAPI = {
   create: (data) => api.post('/api/leads', data),
   update: (id, data) => api.put(`/api/leads/${id}`, data),
   delete: (id) => api.delete(`/api/leads/${id}`),
-  getPorCampaña: (campañaId) => api.get(`/api/leads/por-campaña/${campañaId}`),
   getEstadisticas: () => api.get('/api/leads/estadisticas'),
 };
 
 export const marketingAPI = {
-  getROICampañas: () => api.get('/marketing/la-paz/roi-campañas'),
-  getPerformanceMensual: () => api.get('/marketing/la-paz/performance-mensual'),
-  getLeadsCalificados: () => api.get('/marketing/la-paz/leads-calificados'),
-  getCampañasActivas: () => api.get('/marketing/la-paz/campanas-activas'),
-  getGastosEjecutados: () => api.get('/marketing/la-paz/gastos-ejecutados'),
-  getDashboard: () => api.get('/marketing/la-paz/dashboard'),
+  getDashboard: () => api.get('/api/dashboard'),
   getHealth: () => api.get('/health'),
 };
 
